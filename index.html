@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>keyboardnav</title>
+</head>
+<style>
+    body{
+        background:#ECECEC;
+        height:100vh;
+        display:flex;
+     justify-content: center;
+     align-items: center;
+    }
+ .wrapper{
+   text-align:center;
+   background:rgba(200,200,200,0.8);
+   padding:3em;
+   border-radius:50%;
+}
+
+.wrapper>div:nth-child(2){
+    margin-left:-4em;
+}
+.wrapper>div:nth-child(3){
+    margin-left:-8em;
+}
+kbd{
+    display:inline-block;
+    margin:0.7em;
+    padding:1.2em 1.6em;
+    text-transform:uppercase;
+    position:relative;
+    background: linear-gradient(135deg, rgba(236,236,236,1) 0%, rgba(207,207,207,1) 98%);
+    border-radius:20%;
+    box-shadow:
+    0 3px #B7B7B7,
+    0 4px#4C4C4C,
+    0px 5px#666667,
+    0 0 5px 2px #666667;
+     color:#8A8A8A;
+     font-family:'Courier New', Courier, monospace;
+}
+kbd>img{
+    width:1em;
+    height:1em;
+    position:absolute;
+    bottom:4px;
+    left:4px;
+}
+kbd>button{
+    position:absolute;
+    bottom:0;
+    right:0;
+    display:none;
+}
+kbd:hover>button{
+    display:inline-block;
+}
+
+</style>
+<body>
+    <header></header>
+    <main>
+        <div class="wrapper" id="wrapper">
+        </div>
+    </main>
+    <footer></footer>
+</body>
+<script>
+//变量常量声明区-------------------------------
+var keys={
+    0:['q','w','e','r','t','y','u','i','o','p'],
+    1:['a','s','d','f','g','h','j','k','l'],
+    2:['z','x','c','v','b','n','m'],
+    length:3
+}   
+var websites={
+    'q':'qq.com','w':'weibo.com','e':'ele.me','r':undefined,'t':'tiktok.com','y':'youku.com','u':'udemy.com','i':'ireader.com','o':'oppo.com','p':undefined,
+    'a':'alibaba.com','s':'sougou.com','d':'didi.com','f':'firefox.com','g':'google','h':undefined,'j':undefined,'k':'kuwo.com','l':undefined,
+    'z':undefined,'x':undefined,'c':undefined,'v':'v2ex.com','b':'baidu.com','n':undefined,'m':undefined
+} 
+const WRAPPER=document.getElementById('wrapper')
+
+//函数执行区------------------------------------
+resetWebsites()
+generateKeyboard()
+listenKeyPress()
+
+//函数封装区-------------------------------
+function resetWebsites(){
+ websitesLocalStorageJS=JSON.parse(localStorage.getItem('websitesLocalStorageJSON')||null)
+    if(websitesLocalStorageJS){
+        websites=websitesLocalStorageJS
+    }
+}
+function generateKeyboard(){
+    for(var i=0;i<keys.length;i++){
+        div1=document.createElement('div')
+        WRAPPER.appendChild(div1)
+        for(var j=0;j<keys[i].length;j++){
+            kbd1=document.createElement('kbd')
+            kbd1.textContent=keys[i][j]
+            div1.appendChild(kbd1)
+            if(websites[keys[i][j]]){
+                img1=document.createElement('img')
+            img1.src='http://'+websites[keys[i][j]]+'/favicon.ico'
+            kbd1.appendChild(img1)
+            img1.onerror=function(e){
+                e.target.src='rect.jpg'
+            }
+            }else{
+                div2=document.createElement('div')
+            div2.style.width="0.5em"
+            div2.style.height="0.5em"
+            div2.style.background="white"
+            div2.style.borderRadius="50%"
+            div2.style.position="absolute"
+            div2.style.left="4px"
+            div2.style.bottom="4px"
+            kbd1.appendChild(div2)
+            }
+            
+            btn1=document.createElement('button')
+            btn1.textContent='编辑'
+            btn1.id=keys[i][j]
+            kbd1.appendChild(btn1)
+            img1.onclick=function(e){
+                  window.open('http://'+websites[e.target.nextElementSibling.id],'_blank')
+
+            }
+            btn1.onclick=function(e){
+               websites[e.target.id]=prompt('Give me a website')
+               localStorage.setItem('websitesLocalStorageJSON',JSON.stringify(websites))
+              
+            }
+        }
+    }
+
+}
+function listenKeyPress(){
+    document.onkeypress=function(e){
+      window.open('http://'+websites[e.key],'_blank')
+   }
+}
+</script>
+</html>
+
+
